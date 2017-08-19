@@ -1,7 +1,6 @@
 package com.saferize.interview.servicesimpl;
 
 /**
- * @author Ramona Harrison
  * @modified by Aman Mahato
  */
 import java.io.IOException;
@@ -23,6 +22,15 @@ public class FindUrlServiceImpl implements FindUrlService {
 
     private int linkCounter;
 
+    private int MAXIMUM_NUMBER_HOP=500;
+
+    private String hopMessage=null;
+
+    @Override
+    public String getHopMessage() {
+        return hopMessage;
+    }
+
     @Override
     public int getLinkCounter() {
         return linkCounter;
@@ -40,26 +48,17 @@ public class FindUrlServiceImpl implements FindUrlService {
         this.linkCounter=0;
     }
 
-    //Testing
-    /*public static void main(String[] args) throws IOException {
-        FindUrlServiceImpl test=new FindUrlServiceImpl();
-        String input="https://en.wikipedia.org/wiki/Friends";
-        if (!test.isValidUrl(input)) {
-            System.out.println("Please format input as a valid URL, for example: http://en.wikipedia.org/wiki/Nocturnality\n");
-        }
-        test.findPhilosophy(input);
-        System.out.println(test.getLinkCounter());
-        test.getUrlList().forEach(i-> System.out.println(i));
-    }*/
-
     @Override
     public String findPhilosophy(String article) throws IOException {
         if (!article.equalsIgnoreCase("http://en.wikipedia.org/wiki/Philosophy")) {
             String nextLink = grabNextLink(article);
             urlList.add(nextLink);
             linkCounter++;
+            if(linkCounter>MAXIMUM_NUMBER_HOP){
+                hopMessage="HOP LIMIT EXCEEDED";
+                return "";
+            }
             findPhilosophy(nextLink);
-            //System.out.println("was here");
         }
         return "";
     }
@@ -79,18 +78,12 @@ public class FindUrlServiceImpl implements FindUrlService {
         return "http://en.wikipedia.org" + nextLink.substring(9, nextLink.indexOf("\"", 10));
     }
 
-   /* public void printTitle(String article) {
-        // formats titles for printing to the console
-        System.out.println("         ▼\n      " + article.substring(29).replace("_", " "));
-    }*/
-
    @Override
     public boolean isValidUrl(String input) {
         return (input.startsWith("https://en.wikipedia.org/wiki/") || input.startsWith("http://en.wikipedia.org/wiki/"));
     }
 
     private boolean isFirstRealLink(String link) {
-        // filters out most language and pronunciation and non-wiki links
         return (link.contains("wiki") && !link.contains("Greek") && !link.contains("Latin") && !link.contains("wiktionary"));
     }
 
@@ -149,5 +142,4 @@ public class FindUrlServiceImpl implements FindUrlService {
             return null;
         }
     }
-
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,32 +29,33 @@ public class SaveToDobController {
     private PathInfoToDbService pathInfoToDbService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public String saveToDb(@ModelAttribute("urlDto") @Validated UrlDto urlDtoFromBack, Model modelAfterDbPush){
-        //System.out.println(urlDtoFromBack.getUrl());
-        //List<String> pathUrls=new ArrayList<>();
-        String input=urlDtoFromBack.getUrl();
+    public String saveToDb(@ModelAttribute("urlDto") @Validated UrlDto urlDtoFromBack, Model modelAfterDbPush, Model errorMessage) {
+        String input = urlDtoFromBack.getUrl();
+        errorMessage.addAttribute("startFromPhilosophy", false);
+        errorMessage.addAttribute("urlNotValid", false);
+        errorMessage.addAttribute("hopExceeded", false);
+        if (input.equalsIgnoreCase("https://en.wikipedia.org/wiki/Philosophy")) {
+            errorMessage.addAttribute("startFromPhilosophy", true);
+            return "webpage";
+        }
         if (!findUrlService.isValidUrl(input)) {
-            System.out.println("Please format input as a valid URL, for example: http://en.wikipedia.org/wiki/Nocturnality\n");
+            System.out.println("Please format input as a valid URL");
+            errorMessage.addAttribute("urlNotValid", true);
+            return "webpage";
         }
         try {
             findUrlService.findPhilosophy(input);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(findUrlService.getLinkCounter());
-        //findUrlService.getUrlList().forEach(i-> System.out.println(i));
-        //findUrlService.getUrlList().forEach(i->pathUrls.add(i));
-        //SaferizeInfo saferizeInfo=new SaferizeInfo();
-        //saferizeInfo.setUrl();
-        //pathInfoToDbService.addUrlToDb();
-        Integer id=1;
-        List<String> pathUrls=findUrlService.getUrlList();
-        for(String individualUrl:pathUrls){
-            SaferizeInfo saferizeInfo=new SaferizeInfo();
+        List<String> pathUrls = findUrlService.getUrlList();
+        for (String individualUrl : pathUrls) {
+            SaferizeInfo saferizeInfo = new SaferizeInfo();
             saferizeInfo.setUrl(individualUrl);
-            saferizeInfo.setId(id++);
             pathInfoToDbService.addUrlToDb(saferizeInfo);
         }
+        modelAfterDbPush.addAttribute("AllPath", pathUrls);
+        modelAfterDbPush.addAttribute("count", findUrlService.getLinkCounter());
         return "path";
     }
 }

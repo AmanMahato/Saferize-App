@@ -1,9 +1,6 @@
 package com.saferize.interview.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Aman Mahato
@@ -14,6 +11,7 @@ public class SaferizeInfo {
 
     @Id
     @Column(name = "id",unique = true,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
 
     @Column(name="path_url")

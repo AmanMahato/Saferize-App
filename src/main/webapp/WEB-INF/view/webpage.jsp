@@ -1,5 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -19,5 +20,23 @@
     <form:input path="url"></form:input>
     <input type="submit" value="Submit">
 </form:form>
+
+<c:choose>
+    <c:when test="${startFromPhilosophy==true}">
+        You are already on philosophy wiki page. Please try again!
+    </c:when>
+
+    <c:when test="${urlNotValid==true}">
+        URL provided is Invalid. Please try again!
+    </c:when>
+
+    <c:when test="${hopExceeded==true}">
+        Maximum Hop Limit of 500 exceeded. Philosophy was not found within the depth of 500 hops. Please try again with some other starting wiki page.
+    </c:when>
+
+    <c:otherwise>
+
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

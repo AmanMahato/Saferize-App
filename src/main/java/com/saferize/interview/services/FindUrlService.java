@@ -12,4 +12,5 @@ public interface FindUrlService {
     List<String> getUrlList();
     public boolean isValidUrl(String input);
     public String findPhilosophy(String article) throws IOException;
+    public String getHopMessage();
 }

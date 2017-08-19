@@ -60,7 +60,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="presidentNameDao" class="com.saferize.interview.daoimpl.PathInfoDaoImpl">
+    <bean id="pathInfoDao" class="com.saferize.interview.daoimpl.PathInfoDaoImpl">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 

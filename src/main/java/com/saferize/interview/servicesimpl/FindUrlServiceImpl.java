@@ -65,11 +65,11 @@ public class FindUrlServiceImpl implements FindUrlService {
 
     private String grabNextLink(String article) throws IOException {
         String nextLink = "";
-        URL url = stringToURL(article);            // builds URL from string
-        Document doc = Jsoup.parse(url, 100000);        // parses wiki page, times out after 100 seconds
-        Elements links = doc.select("p > a");           // selects only links within <p> tags
+        URL url = stringToURL(article);
+        Document doc = Jsoup.parse(url, 100000);
+        Elements links = doc.select("p > a");
 
-        for (int i = 0; i < links.size(); i++) {        // chooses the first suitable link
+        for (int i = 0; i < links.size(); i++) {
             if (isFirstRealLink(links.get(i).toString())) {
                 nextLink = links.get(i).toString();
                 break;
@@ -88,29 +88,6 @@ public class FindUrlServiceImpl implements FindUrlService {
     }
 
     /**
-     * Reads from 'reader' by 'blockSize' until end-of-stream, and returns its complete contents.
-     */
-    private String readAll(InputStreamReader reader, int blockSize) throws IOException {
-        final char buffer[] = new char[blockSize];
-        StringBuilder builder = new StringBuilder();
-        while (true) {
-            final int readSize = reader.read(buffer);
-            if (readSize >= 0)
-                builder.append(buffer, 0, readSize);
-            else
-                break;
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Returns from 'reader' until end-of-stream, and returns its complete contents.
-     */
-    private String readAll(InputStreamReader reader) throws IOException {
-        return readAll(reader, 1024 * 1024);
-    }
-
-    /**
      * Interprets a string as a URL.  If the string isn't a valid URL, prints an error message and returns null.
      */
     public URL stringToURL(String string) {
@@ -118,27 +95,6 @@ public class FindUrlServiceImpl implements FindUrlService {
             return new URL(string);
         } catch (MalformedURLException exception) {
             System.err.println("invalid URL: " + string + ": " + exception);
-            return null;
-        }
-    }
-
-    /**
-     * Retrieves the body of a URL.
-     *
-     * Opens a connection to the URL, makes a request, and retrieves the response.  Returns the body.  If the
-     * URL cannot be opened or the response cannot be read, prints an error message and returns null.
-     */
-    private String get(URL url) {
-        try {
-            final URLConnection connection = url.openConnection();
-            final InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-            try {
-                return readAll(reader);
-            } finally {
-                reader.close();
-            }
-        } catch (IOException exception) {
-            System.err.println("can't open URL: " + url + ": " + exception);
             return null;
         }
     }
